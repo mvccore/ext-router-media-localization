@@ -11,7 +11,7 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace Mvccore\Ext\Routers\MediaAndLocalization;
+namespace MvcCore\Ext\Routers\MediaAndLocalization;
 
 trait Redirecting
 {

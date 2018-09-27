@@ -11,7 +11,7 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace Mvccore\Ext\Routers;
+namespace MvcCore\Ext\Routers;
 
 class		MediaAndLocalization
 extends		\MvcCore\Router
@@ -31,8 +31,6 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlCompletion;
 
 	const VERSION = '5.0.0-alpha';
-
-	protected $trailingSlashBehaviour = 0;
 
 	public function Route () {
 		if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;

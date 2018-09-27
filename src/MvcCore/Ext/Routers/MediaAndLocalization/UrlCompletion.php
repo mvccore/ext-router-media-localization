@@ -11,7 +11,7 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace Mvccore\Ext\Routers\MediaAndLocalization;
+namespace MvcCore\Ext\Routers\MediaAndLocalization;
 
 trait UrlCompletion
 {
@@ -19,7 +19,7 @@ trait UrlCompletion
 		/** @var $route \MvcCore\Route */
 		$requestedUrlParams = $this->GetRequestedUrlParams();
 		$localizedRoute = $route instanceof \MvcCore\Ext\Routers\Localizations\Route;
-
+		
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		$localizationParamName = static::LOCALIZATION_URL_PARAM;
 
@@ -83,7 +83,7 @@ trait UrlCompletion
 			: $result;
 		if ($localizedRoute && trim($resultPath, '/') !== $this->defaultLocalizationStr)
 			$localizationUrlPrefix = '/' . $localizationStr;
-		
+		xxx($localizationUrlPrefix);
 		return $this->request->GetBasePath() 
 			. $mediaSiteUrlPrefix 
 			. $localizationUrlPrefix
