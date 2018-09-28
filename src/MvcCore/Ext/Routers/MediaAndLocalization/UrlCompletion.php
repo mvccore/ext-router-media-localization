@@ -15,7 +15,7 @@ namespace MvcCore\Ext\Routers\MediaAndLocalization;
 
 trait UrlCompletion
 {
-	public function UrlByRoute (\MvcCore\Interfaces\IRoute & $route, & $params = []) {
+	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = []) {
 		/** @var $route \MvcCore\Route */
 		$requestedUrlParams = $this->GetRequestedUrlParams();
 		$localizedRoute = $route instanceof \MvcCore\Ext\Routers\Localizations\Route;
@@ -81,9 +81,20 @@ trait UrlCompletion
 		$resultPath = $questionMarkPos !== FALSE 
 			? mb_substr($result, 0, $questionMarkPos)
 			: $result;
-		if ($localizedRoute && trim($resultPath, '/') !== $this->defaultLocalizationStr)
-			$localizationUrlPrefix = '/' . $localizationStr;
-		xxx($localizationUrlPrefix);
+		$resultPathTrimmed = trim($resultPath, '/');
+		if (
+			$localizedRoute && !(
+				$resultPathTrimmed === '' && 
+				$localizationStr === $this->defaultLocalizationStr
+			)
+		) $localizationUrlPrefix = '/' . $localizationStr;
+
+		if (
+			$resultPathTrimmed === '' &&
+			$mediaSiteUrlPrefix !== '' && 
+			$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE
+		) $result = ltrim($result, '/');
+		
 		return $this->request->GetBasePath() 
 			. $mediaSiteUrlPrefix 
 			. $localizationUrlPrefix
