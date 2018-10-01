@@ -20,7 +20,7 @@ namespace MvcCore\Ext\Routers;
  *					to proper media site version or localization by configuration.
  *					Than route request like parent class does.
  */
-interface MediaAndLocalization
+interface IMediaAndLocalization
 {
 	/**
 	 * Get url prefixes prepended before request url path to describe media site version in url.
@@ -35,7 +35,7 @@ interface MediaAndLocalization
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ];
 	 * ```
-	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & GetAllowedSiteKeysAndUrlPrefixes ();
 
@@ -53,7 +53,7 @@ interface MediaAndLocalization
 	 * ]);
 	 * ```
 	 * @param array $allowedSiteKeysAndUrlPrefixes
-	 * @return \MvcCore\Ext\Routers\IMedia
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []);
 
@@ -79,7 +79,7 @@ interface MediaAndLocalization
 	 * previous localization from session.
 	 * @var string $defaultLocalizationOrLanguage It could be `en` or `en-US`, `en-GB`...
 	 * @var string $defaultLocale It could be `US`, `GB`...
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetDefaultLocalization ($defaultLocalizationOrLanguage, $defaultLocale = NULL);
 
@@ -101,7 +101,7 @@ interface MediaAndLocalization
 	 * @param string $lang 
 	 * @param string $locale 
 	 * @throws \InvalidArgumentException Localization must be defined at least by the language.
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetLocalization ($lang, $locale = NULL);
 
@@ -120,7 +120,7 @@ interface MediaAndLocalization
 	 * If not configured, `FALSE` by default to not redirect in first request to
 	 * default localization version but to route requested localization version.
 	 * @param bool $redirectFirstRequestToDefault
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetRedirectFirstRequestToDefault ($redirectFirstRequestToDefault = TRUE);
 
@@ -137,7 +137,7 @@ interface MediaAndLocalization
 	 * If `FALSE` non-localized routes are ingored and there is thrown an 
 	 * exception in development environment.
 	 * @param bool $allowNonLocalizedRoutes
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetAllowNonLocalizedRoutes ($allowNonLocalizedRoutes = TRUE);
 
@@ -164,7 +164,7 @@ interface MediaAndLocalization
 	 * language code together with international locale code with the only same 
 	 * combination which application has configured in allowed localizations only.
 	 * @param bool $detectAcceptLanguageOnlyByLang
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetDetectAcceptLanguageOnlyByLang ($detectAcceptLanguageOnlyByLang = TRUE);
 
@@ -186,7 +186,7 @@ interface MediaAndLocalization
 	 * dash. All previously defined allowed localizations will be replaced.
 	 * Default localization is always allowed automaticly.
 	 * @var string $allowedLocalizations..., International lowercase language code(s) (+ optinally dash character + uppercase international locale code(s))
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetAllowedLocalizations (/* ...$allowedLocalizations */);
 
@@ -198,7 +198,7 @@ interface MediaAndLocalization
 	 * dash. 
 	 * Default localization is always allowed automaticly.
 	 * @var string $allowedLocalizations..., International lowercase language code(s) (+ optinally dash character + uppercase international locale code(s))
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & AddAllowedLocalizations (/* ...$allowedLocalizations */);
 	
@@ -220,7 +220,7 @@ interface MediaAndLocalization
 	 * localization equivalents. All previously configured localization equivalents
 	 * will be replaced with given configuration.
 	 * @param array $localizationEquivalents Keys in this array is target localization, value is an array with target localization equivalents.
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetLocalizationEquivalents (array $localizationEquivalents = []);
 	
@@ -232,7 +232,7 @@ interface MediaAndLocalization
 	 * localization equivalents. All previously configured localization equivalents
 	 * will be merged with given configuration.
 	 * @param array $localizationEquivalents Keys in this array is target localization, value is an array with target localization equivalents.
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & AddLocalizationEquivalents (array $localizationEquivalents = []);
 
@@ -253,7 +253,7 @@ interface MediaAndLocalization
 	 * This option is very rare, if different locales have different naming 
 	 * for url strings.
 	 * @param bool $routeRecordsByLanguageAndLocale
-	 * @return \MvcCore\Ext\Routers\ILocalization
+	 * @return \MvcCore\Ext\Routers\IMediaAndLocalization
 	 */
 	public function & SetRouteRecordsByLanguageAndLocale ($routeRecordsByLanguageAndLocale = TRUE);
 
@@ -278,7 +278,7 @@ interface MediaAndLocalization
 	 *		);`
 	 *	Output:
 	 *		`/application/base-bath/m/en-US/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
-	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
+	 * @param \MvcCore\IRoute &$route
 	 * @param array $params
 	 * @return string
 	 */
