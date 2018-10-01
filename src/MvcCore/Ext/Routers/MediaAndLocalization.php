@@ -22,7 +22,8 @@ namespace MvcCore\Ext\Routers;
  */
 class		MediaAndLocalization
 extends		\MvcCore\Router
-implements	\MvcCore\Ext\Routers\MediaAndLocalization,
+implements	\MvcCore\Ext\Routers\IMedia,
+			\MvcCore\Ext\Routers\ILocalization,
 			\MvcCore\Ext\Routers\IExtended
 {
 	use \MvcCore\Ext\Routers\Extended;
