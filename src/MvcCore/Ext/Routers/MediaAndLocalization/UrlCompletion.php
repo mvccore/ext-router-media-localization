@@ -15,6 +15,31 @@ namespace MvcCore\Ext\Routers\MediaAndLocalization;
 
 trait UrlCompletion
 {
+	/**
+	 * Complete non-absolute, non-localized url by route instance reverse info.
+	 * If there is key `media_version` in `$params`, unset this param before
+	 * route url completing and choose by this param url prefix to prepend 
+	 * completed url string.
+	 * If there is key `localization` in `$params`, unset this param before
+	 * route url completing and place this param as url prefix to prepend 
+	 * completed url string and to prepend media site version prefix.
+	 * Example:
+	 *	Input (`\MvcCore\Route::$reverse`):
+	 *		`"/products-list/<name>/<color>"`
+	 *	Input ($params):
+	 *		`array(
+	 *			"name"			=> "cool-product-name",
+	 *			"color"			=> "red",
+	 *			"variant"		=> ["L", "XL"],
+	 *			"media_version"	=> "mobile",
+	 *			"localization"	=> "en-US",
+	 *		);`
+	 *	Output:
+	 *		`/application/base-bath/m/en-US/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
+	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
+	 * @param array $params
+	 * @return string
+	 */
 	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = []) {
 		/** @var $route \MvcCore\Route */
 		$requestedUrlParams = $this->GetRequestedUrlParams();
@@ -32,36 +57,45 @@ trait UrlCompletion
 		} else {
 			$mediaSiteVersion = $this->mediaSiteVersion;
 		}
-		if (!isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion]))
-			throw new \InvalidArgumentException(
+		
+		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
+			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
+
+		if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
+			$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
+		} else {
+			$mediaSiteUrlPrefix = '';
+			trigger_error(
 				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
 				.$mediaSiteVersion.'`. Allowed values: `'
-				.implode('`, `', array_keys($this->allowedSiteKeysAndUrlPrefixes)) . '`.'
+				.implode('`, `', array_keys($this->allowedSiteKeysAndUrlPrefixes)) . '`.',
+				E_USER_ERROR
 			);
+		}
 
-		if (!isset($params[$localizationParamName])) {
+		if (isset($params[$localizationParamName])) {
+			$localizationStr = $params[$localizationParamName];
+			//if (!$localizedRoute) unset($params[$localizationParamName]);
+		} else {
 			$localizationStr = implode(
 				static::LANG_AND_LOCALE_SEPARATOR, $this->localization
 			);
 			if ($localizedRoute) $params[$localizationParamName] = $localizationStr;
-		} else if (isset($params[$localizationParamName])) {
-			$localizationStr = $params[$localizationParamName];
-			//if (!$localizedRoute) unset($params[$localizationParamName]);
 		}
 		
 		if (!isset($this->allowedLocalizations[$localizationStr])) {
 			if (isset($this->localizationEquivalents[$localizationStr])) 
 				$localizationStr = $this->localizationEquivalents[$localizationStr];
-			if (!isset($this->allowedLocalizations[$localizationStr]))
-				throw new \InvalidArgumentException(
+			if (!isset($this->allowedLocalizations[$localizationStr])) {
+				$localizationStr = '';
+				trigger_error(
 					'['.__CLASS__.'] Not allowed localization used to generate url: `'
 					.$localizationStr.'`. Allowed values: `'
-					.implode('`, `', array_keys($this->allowedLocalizations)) . '`.'
+					.implode('`, `', array_keys($this->allowedLocalizations)) . '`.',
+					E_USER_ERROR
 				);
+			}
 		}
-
-		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
-			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
 
 		if (
 			$this->stricModeBySession && 
@@ -72,8 +106,6 @@ trait UrlCompletion
 		$result = $route->Url(
 			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
 		);
-
-		$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
 
 		$localizationUrlPrefix = '';
 		$questionMarkPos = mb_strpos($result, '?');
