@@ -43,32 +43,50 @@ trait Redirecting
 		// unset site key switch param and redirect to no switch param uri version
 		$request = & $this->request;
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
-		$localizationUrlParam = static::LANG_AND_LOCALE_SEPARATOR;
-		$targetLocalizationStr = implode($localizationUrlParam, $targetLocalization);
-		$targetIsTheSameAsDefault = $targetLocalizationStr === $this->defaultLocalizationStr;
-		if ($this->anyRoutesConfigured) {
-			$path = $request->GetPath(TRUE);
-			$targetLocalizationStr = ($targetIsTheSameAsDefault && ($path == '/' || $path == ''))
-				? ''
-				: '/' . $targetLocalizationStr;
-			$targetUrl = $request->GetBaseUrl()
-				. $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion] 
-				. $targetLocalizationStr
-				. $path;
-		} else {
-			$targetUrl = $request->GetBaseUrl();
-			if ($targetMediaSiteVersion === static::MEDIA_VERSION_FULL) {
+		$localizationUrlParam = static::LOCALIZATION_URL_PARAM;
+		
+		$targetMediaSameAsDefault = $targetMediaSiteVersion === static::MEDIA_VERSION_FULL;
+
+		$targetLocalizationStr = implode(static::LANG_AND_LOCALE_SEPARATOR, $targetLocalization);
+		$targetLocalizationSameAsDefault = $targetLocalizationStr === $this->defaultLocalizationStr;
+
+		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {
+			if ($targetMediaSameAsDefault) {
 				if (isset($this->requestGlobalGet[$mediaVersionUrlParam]))
 					unset($this->requestGlobalGet[$mediaVersionUrlParam]);
 			} else {
 				$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
 			}
-			if ($targetIsTheSameAsDefault) {
+			$targetMediaPrefix = '';
+		} else {
+			$targetMediaPrefix = $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion];
+		}
+
+		if (isset($this->requestGlobalGet[$localizationUrlParam])) {
+			if ($targetLocalizationSameAsDefault) {
 				if (isset($this->requestGlobalGet[$localizationUrlParam]))
 					unset($this->requestGlobalGet[$localizationUrlParam]);
 			} else {
 				$this->requestGlobalGet[$localizationUrlParam] = $targetLocalizationStr;
 			}
+			$targetLocalizationPrefix = '';
+		} else {
+			$path = $request->GetPath(TRUE);
+			$targetLocalizationPrefix = (
+				$targetLocalizationSameAsDefault && 
+				(trim($path, '/') === '' || $path === $this->request->GetScriptName())
+			)
+				? ''
+				: '/' . $targetLocalizationStr;
+		}
+
+		if ($this->anyRoutesConfigured) {
+			$targetUrl = $request->GetBaseUrl()
+				. $targetMediaPrefix
+				. $targetLocalizationPrefix
+				. $request->GetPath(TRUE);
+		} else {
+			$targetUrl = $request->GetBaseUrl();
 			$this->removeDefaultCtrlActionFromGlobalGet();
 			if ($this->requestGlobalGet)
 				$targetUrl .= $request->GetScriptName();
@@ -77,6 +95,7 @@ trait Redirecting
 			$amp = $this->getQueryStringParamsSepatator();
 			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp));
 		}
+
 		$this->redirect($targetUrl, \MvcCore\IResponse::SEE_OTHER);
 		return FALSE;
 	}
