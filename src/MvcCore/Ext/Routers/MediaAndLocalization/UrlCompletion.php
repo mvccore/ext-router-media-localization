@@ -61,7 +61,10 @@ trait UrlCompletion
 		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
 			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
 
-		if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
+		$routeMethod = $route->GetMethod();
+		if ($routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET && $this->routeGetRequestsOnly) {
+			$mediaSiteUrlPrefix = '';
+		} else if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
 			$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
 		} else {
 			$mediaSiteUrlPrefix = '';
@@ -120,10 +123,14 @@ trait UrlCompletion
 				$localizationStr === $this->defaultLocalizationStr
 			)
 		) $localizationUrlPrefix = '/' . $localizationStr;
+		if ($this->routeGetRequestsOnly) {
+			$routeMethod = $route->GetMethod();
+			if ($routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET) 
+				$localizationUrlPrefix = '';
+		}
 
 		if (
 			$resultPathTrimmed === '' &&
-			$mediaSiteUrlPrefix !== '' && 
 			$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE
 		) $result = ltrim($result, '/');
 		
