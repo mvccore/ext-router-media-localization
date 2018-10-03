@@ -21,7 +21,15 @@ trait Redirecting
 	 * @return bool
 	 */
 	protected function redirectToTargetMediaSiteVersion ($targetMediaSiteVersion) {
-		return $this->redirectToTargetVersion($targetMediaSiteVersion, $this->requestLocalization);
+		return $this->redirectToTargetVersion(
+			$targetMediaSiteVersion, 
+			$this->requestLocalization !== NULL
+				? $this->requestLocalization
+				: ($this->sessionLocalization !== NULL
+					? $this->sessionLocalization
+					: $this->defaultLocalization
+				)
+		);
 	}
 
 	/**
@@ -30,7 +38,15 @@ trait Redirecting
 	 * @return bool
 	 */
 	protected function redirectToTargetLocalization ($targetLocalization) {
-		return $this->redirectToTargetVersion($this->requestMediaSiteVersion, $targetLocalization);
+		return $this->redirectToTargetVersion(
+			$this->requestMediaSiteVersion !== NULL
+				? $this->requestMediaSiteVersion
+				: ($this->sessionMediaSiteVersion !== NULL
+					? $this->sessionMediaSiteVersion
+					: static::MEDIA_VERSION_FULL
+				), 
+			$targetLocalization
+		);
 	}
 
 	/**
@@ -95,7 +111,7 @@ trait Redirecting
 			$amp = $this->getQueryStringParamsSepatator();
 			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp));
 		}
-
+		
 		$this->redirect($targetUrl, \MvcCore\IResponse::SEE_OTHER);
 		return FALSE;
 	}

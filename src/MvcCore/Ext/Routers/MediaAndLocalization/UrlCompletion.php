@@ -106,6 +106,7 @@ trait UrlCompletion
 		$result = $route->Url(
 			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
 		);
+		//x([$result, $localizedRoute, $route, $params]);
 
 		$localizationUrlPrefix = '';
 		$questionMarkPos = mb_strpos($result, '?');
