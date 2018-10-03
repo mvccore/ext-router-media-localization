@@ -29,6 +29,7 @@ Extension works in the same way as extensions named above, each task is executed
 like for media extension first, then like for localization extension as second:
 - [How It Works - `mvccore/ext-router-media`](https://github.com/mvccore/ext-router-media#user-content-3-how-it-works)
 - [How It Works - `mvccore/ext-router-localization`](https://github.com/mvccore/ext-router-localization#user-content-3-how-it-works)
+
 Only routing is implemented explicitly (it means method `Route()` in this router) and processing redirections and completing url addresses is implemented explicitly - to complete the proper URL string together with both query string values or with both prefixes.
 
 ## Usage
