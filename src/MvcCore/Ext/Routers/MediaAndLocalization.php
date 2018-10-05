@@ -77,16 +77,14 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	 */
 	public function Route () {
 		if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
-		$request = & $this->request;
-		$requestCtrlName = $request->GetControllerName();
-		$requestActionName = $request->GetActionName();
+		list($routeByQueryString, $requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
 		$this->anyRoutesConfigured = count($this->routes) > 0;
 		$this->preRoutePrepare();
 		if (!$this->preRoutePrepareMedia()) return FALSE;
 		if (!$this->preRoutePrepareLocalization()) return FALSE;
 		if (!$this->preRouteMedia()) return FALSE;
 		if (!$this->preRouteLocalization()) return FALSE;
-		if ($requestCtrlName && $requestActionName) {
+		if ($routeByQueryString) {
 			$this->routeByControllerAndActionQueryString(
 				$requestCtrlName, $requestActionName
 			);
