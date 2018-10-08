@@ -38,22 +38,37 @@ trait UrlCompletion
 	 *		`/application/base-bath/m/en-US/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
+	 * @param string $givenRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = []) {
+	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = [], $givenRouteName = 'self') {
 		/** @var $route \MvcCore\Route */
-		$requestedUrlParams = $this->GetRequestedUrlParams();
+		$defaultParams = $this->GetDefaultParams();
 		$localizedRoute = $route instanceof \MvcCore\Ext\Routers\Localizations\Route;
-		
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		$localizationParamName = static::LOCALIZATION_URL_PARAM;
+
+		if ($givenRouteName == 'self') {
+			$newParams = [];
+			foreach ($route->GetReverseParams() as $paramName) {
+				$newParams[$paramName] = isset($params[$paramName])
+					? $params[$paramName]
+					: $defaultParams[$paramName];
+			}
+			if ($localizedRoute && isset($params[$localizationParamName])) 
+				$newParams[$localizationParamName] = $params[$localizationParamName];
+			if (isset($params[$mediaVersionUrlParam])) 
+				$newParams[$mediaVersionUrlParam] = $params[$mediaVersionUrlParam];
+			$params = $newParams;
+			unset($params['controller'], $params['action']);
+		}
 
 		if (isset($params[$mediaVersionUrlParam])) {
 			$mediaSiteVersion = $params[$mediaVersionUrlParam];
 			unset($params[$mediaVersionUrlParam]);
-		} else if (isset($requestedUrlParams[$mediaVersionUrlParam])) {
-			$mediaSiteVersion = $requestedUrlParams[$mediaVersionUrlParam];
-			unset($requestedUrlParams[$mediaVersionUrlParam]);
+		} else if (isset($defaultParams[$mediaVersionUrlParam])) {
+			$mediaSiteVersion = $defaultParams[$mediaVersionUrlParam];
+			unset($defaultParams[$mediaVersionUrlParam]);
 		} else {
 			$mediaSiteVersion = $this->mediaSiteVersion;
 		}
@@ -107,9 +122,9 @@ trait UrlCompletion
 			$params[static::SWITCH_LOCALIZATION_URL_PARAM] = $localizationStr;
 		
 		$result = $route->Url(
-			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
+			$params, $defaultParams, $this->getQueryStringParamsSepatator()
 		);
-		//x([$result, $localizedRoute, $route, $params]);
+		//x([$result, $localizedRoute, $route, $filteredParams]);
 
 		$localizationUrlPrefix = '';
 		$questionMarkPos = mb_strpos($result, '?');
