@@ -41,27 +41,15 @@ trait UrlCompletion
 	 * @param string $givenRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = [], $givenRouteName = 'self') {
+	public function UrlByRoute (\MvcCore\IRoute & $route, array & $params = [], $givenRouteName = NULL) {
 		/** @var $route \MvcCore\Route */
-		$defaultParams = $this->GetDefaultParams();
+		$defaultParams = array_merge([], $this->GetDefaultParams() ?: []);
+		if ($givenRouteName == 'self') 
+			$params = array_merge($this->requestedParams, $params);
+		
 		$localizedRoute = $route instanceof \MvcCore\Ext\Routers\Localizations\Route;
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		$localizationParamName = static::LOCALIZATION_URL_PARAM;
-
-		if ($givenRouteName == 'self') {
-			$newParams = [];
-			foreach ($route->GetReverseParams() as $paramName) {
-				$newParams[$paramName] = isset($params[$paramName])
-					? $params[$paramName]
-					: $defaultParams[$paramName];
-			}
-			if ($localizedRoute && isset($params[$localizationParamName])) 
-				$newParams[$localizationParamName] = $params[$localizationParamName];
-			if (isset($params[$mediaVersionUrlParam])) 
-				$newParams[$mediaVersionUrlParam] = $params[$mediaVersionUrlParam];
-			$params = $newParams;
-			unset($params['controller'], $params['action']);
-		}
 
 		if (isset($params[$mediaVersionUrlParam])) {
 			$mediaSiteVersion = $params[$mediaVersionUrlParam];
@@ -121,16 +109,15 @@ trait UrlCompletion
 		) 
 			$params[static::SWITCH_LOCALIZATION_URL_PARAM] = $localizationStr;
 		
-		$result = $route->Url(
-			$params, $defaultParams, $this->getQueryStringParamsSepatator()
+		list($resultBase, $resultPathWithQuery) = $route->Url(
+			$this->request, $params, $defaultParams, $this->getQueryStringParamsSepatator()
 		);
-		//x([$result, $localizedRoute, $route, $filteredParams]);
 
 		$localizationUrlPrefix = '';
-		$questionMarkPos = mb_strpos($result, '?');
+		$questionMarkPos = mb_strpos($resultPathWithQuery, '?');
 		$resultPath = $questionMarkPos !== FALSE 
-			? mb_substr($result, 0, $questionMarkPos)
-			: $result;
+			? mb_substr($resultPathWithQuery, 0, $questionMarkPos)
+			: $resultPathWithQuery;
 		$resultPathTrimmed = trim($resultPath, '/');
 		if (
 			$localizedRoute && !(
@@ -146,12 +133,13 @@ trait UrlCompletion
 
 		if (
 			$resultPathTrimmed === '' &&
-			$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE
-		) $result = ltrim($result, '/');
+			$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE &&
+			($localizationUrlPrefix !== '' || $mediaSiteUrlPrefix !== '')
+		) $resultPathWithQuery = ltrim($resultPathWithQuery, '/');
 		
-		return $this->request->GetBasePath() 
+		return $resultBase
 			. $mediaSiteUrlPrefix 
 			. $localizationUrlPrefix
-			. $result;
+			. $resultPathWithQuery;
 	}
 }
