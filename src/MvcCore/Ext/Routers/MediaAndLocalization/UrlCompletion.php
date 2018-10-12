@@ -48,8 +48,8 @@ trait UrlCompletion
 			$params = array_merge($this->requestedParams, $params);
 		
 		$localizedRoute = $route instanceof \MvcCore\Ext\Routers\Localizations\Route;
-		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
-		$localizationParamName = static::LOCALIZATION_URL_PARAM;
+		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
+		$localizationParamName = static::URL_PARAM_LOCALIZATION;
 
 		if (isset($params[$mediaVersionUrlParam])) {
 			$mediaSiteVersion = $params[$mediaVersionUrlParam];
@@ -62,7 +62,7 @@ trait UrlCompletion
 		}
 		
 		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
-			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
+			$params[static::URL_PARAM_SWITCH_MEDIA_VERSION] = $mediaSiteVersion;
 
 		$routeMethod = $route->GetMethod();
 		if ($routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET && $this->routeGetRequestsOnly) {
@@ -107,7 +107,7 @@ trait UrlCompletion
 			$this->stricModeBySession && 
 			$localizationStr !== implode(static::LANG_AND_LOCALE_SEPARATOR, $this->localization)
 		) 
-			$params[static::SWITCH_LOCALIZATION_URL_PARAM] = $localizationStr;
+			$params[static::URL_PARAM_SWITCH_LOCALIZATION] = $localizationStr;
 		
 		list($resultBase, $resultPathWithQuery) = $route->Url(
 			$this->request, $params, $defaultParams, $this->getQueryStringParamsSepatator()
