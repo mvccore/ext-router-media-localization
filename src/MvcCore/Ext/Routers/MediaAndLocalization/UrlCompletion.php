@@ -45,7 +45,7 @@ trait UrlCompletion
 		/** @var $route \MvcCore\Route */
 		$defaultParams = array_merge([], $this->GetDefaultParams() ?: []);
 		if ($givenRouteName == 'self') 
-			$params = array_merge($this->requestedParams, $params);
+			$params = array_merge($this->requestedParams ?: [], $params);
 		
 		$localizedRoute = $route instanceof \MvcCore\Ext\Routers\Localizations\Route;
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;

@@ -16,11 +16,19 @@ namespace MvcCore\Ext\Routers\MediaAndLocalization;
 trait Redirecting
 {
 	/**
+	 * Response HTTP code, `303 See Other` for changing media, 
+	 * `301 Moved Permanently` for localization. Default `0`.
+	 * @var int
+	 */
+	protected $redirectStatusCode = 0;
+
+	/**
 	 * Redirect to target media site version with path and query string.
 	 * @param string $targetMediaSiteVersion 
 	 * @return bool
 	 */
 	protected function redirectToTargetMediaSiteVersion ($targetMediaSiteVersion) {
+		$this->redirectStatusCode = \MvcCore\IResponse::SEE_OTHER;
 		return $this->redirectToTargetVersion(
 			$targetMediaSiteVersion, 
 			$this->requestLocalization !== NULL
@@ -38,6 +46,7 @@ trait Redirecting
 	 * @return bool
 	 */
 	protected function redirectToTargetLocalization ($targetLocalization) {
+		$this->redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
 		return $this->redirectToTargetVersion(
 			$this->requestMediaSiteVersion !== NULL
 				? $this->requestMediaSiteVersion
@@ -109,10 +118,12 @@ trait Redirecting
 		}
 		if ($this->requestGlobalGet) {
 			$amp = $this->getQueryStringParamsSepatator();
-			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp));
+			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp, PHP_QUERY_RFC3986));
 		}
 		
-		$this->redirect($targetUrl, \MvcCore\IResponse::SEE_OTHER);
+		if ($this->request->GetFullUrl() === $targetUrl) return TRUE;
+		
+		$this->redirect($targetUrl, $this->redirectStatusCode);
 		return FALSE;
 	}
 }
