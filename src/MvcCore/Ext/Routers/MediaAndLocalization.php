@@ -29,13 +29,17 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	use \MvcCore\Ext\Routers\Extended;
 
 	use \MvcCore\Ext\Routers\Media\PropsGettersSetters;
+	use \MvcCore\Ext\Routers\Media\Preparing;
 	use \MvcCore\Ext\Routers\Media\PreRouting;
 
 	use \MvcCore\Ext\Routers\Localization\PropsGettersSetters;
+	use \MvcCore\Ext\Routers\Localization\Preparing;
 	use \MvcCore\Ext\Routers\Localization\PreRouting;
+	use \MvcCore\Ext\Routers\Localization\RoutingByRoutes;
 	
 	use \MvcCore\Ext\Routers\MediaAndLocalization\Redirecting;
-	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlCompletion;
+	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlByRouteSections;
+	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlByRoute;
 	use \MvcCore\Ext\Routers\MediaAndLocalization\Routing;
 
 	/**

@@ -52,10 +52,10 @@ trait Routing
 			if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
 		list($requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
 		$this->anyRoutesConfigured = count($this->routes) > 0;
-		$this->preRoutePrepare();
 		if (!$this->internalRequest) {
-			if (!$this->preRoutePrepareMedia()) return FALSE;
-			if (!$this->preRoutePrepareLocalization()) return FALSE;
+			$this->prepare();
+			$this->prepareMedia();
+			$this->prepareLocalization();
 			if (!$this->preRouteMedia()) return FALSE;
 			if (!$this->preRouteLocalization()) return FALSE;
 		}

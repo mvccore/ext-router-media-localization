@@ -16,100 +16,60 @@ namespace MvcCore\Ext\Routers\MediaAndLocalization;
 trait Redirecting
 {
 	/**
-	 * Response HTTP code, `303 See Other` for changing media, 
-	 * `301 Moved Permanently` for localization. Default `0`.
-	 * @var int
-	 */
-	protected $redirectStatusCode = 0;
-
-	/**
-	 * Redirect to target media site version with path and query string.
-	 * @param string $targetMediaSiteVersion 
+	 * Redirect to target media site version and localization version with path and query string.
+	 * @param array $targetSystemParams 
 	 * @return bool
 	 */
-	protected function redirectToTargetMediaSiteVersion ($targetMediaSiteVersion) {
-		$this->redirectStatusCode = \MvcCore\IResponse::SEE_OTHER;
-		return $this->redirectToTargetVersion(
-			$targetMediaSiteVersion, 
-			$this->requestLocalization !== NULL
-				? $this->requestLocalization
-				: ($this->sessionLocalization !== NULL
-					? $this->sessionLocalization
-					: $this->defaultLocalization
-				)
-		);
-	}
-
-	/**
-	 * Redirect to target localization version with path and query string.
-	 * @param \string[] $targetLocalization 
-	 * @return bool
-	 */
-	protected function redirectToTargetLocalization ($targetLocalization) {
-		$this->redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
-		return $this->redirectToTargetVersion(
-			$this->requestMediaSiteVersion !== NULL
+	protected function redirectToVersion ($targetSystemParams) {
+		$targetMediaSiteVersion = NULL;
+		$targetLocalization = NULL;
+		$mediaParamName = \MvcCore\Ext\Routers\IMedia::URL_PARAM_MEDIA_VERSION;
+		$localizationParamName = \MvcCore\Ext\Routers\ILocalization::URL_PARAM_LOCALIZATION;
+		$redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
+		if (isset($targetSystemParams[$mediaParamName])) 
+			$targetMediaSiteVersion = $targetSystemParams[$mediaParamName];
+		if (isset($targetSystemParams[$localizationParamName])) {
+			$targetLocalization = $targetSystemParams[$localizationParamName];
+		if ($targetMediaSiteVersion === NULL) {
+			$redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
+			$targetMediaSiteVersion = $this->requestMediaSiteVersion !== NULL
 				? $this->requestMediaSiteVersion
 				: ($this->sessionMediaSiteVersion !== NULL
 					? $this->sessionMediaSiteVersion
 					: static::MEDIA_VERSION_FULL
-				), 
-			$targetLocalization
-		);
-	}
+				);
+		}
+		if ($targetLocalization === NULL) {
+			$redirectStatusCode = \MvcCore\IResponse::SEE_OTHER;
+			$targetLocalization = $this->requestLocalization !== NULL
+				? $this->requestLocalization
+				: ($this->sessionLocalization !== NULL
+					? $this->sessionLocalization
+					: $this->defaultLocalization
+				);
+		}
 
-	/**
-	 * Redirect to target media site version and localization version with path and query string.
-	 * @param string $targetMediaSiteVersion 
-	 * @param \string[] $targetLocalization 
-	 * @return bool
-	 */
-	protected function redirectToTargetVersion ($targetMediaSiteVersion, $targetLocalization) {
 		// unset site key switch param and redirect to no switch param uri version
-		$request = & $this->request;
-		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
-		$localizationUrlParam = static::URL_PARAM_LOCALIZATION;
+		$targetMediaUrlValue = $this->redirectMediaGetPrefixAndUnsetGet($targetMediaSiteVersion);
+		$targetLocalizationUrlValue = $this->redirectLocalizationGetPrefixAndUnsetGet($targetLocalization);
 		
-		$targetMediaSameAsDefault = $targetMediaSiteVersion === static::MEDIA_VERSION_FULL;
-
-		$targetLocalizationStr = implode(static::LANG_AND_LOCALE_SEPARATOR, $targetLocalization);
-		$targetLocalizationSameAsDefault = $targetLocalizationStr === $this->defaultLocalizationStr;
-
-		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {
-			if ($targetMediaSameAsDefault) {
-				if (isset($this->requestGlobalGet[$mediaVersionUrlParam]))
-					unset($this->requestGlobalGet[$mediaVersionUrlParam]);
-			} else {
-				$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
-			}
-			$targetMediaPrefix = '';
-		} else {
-			$targetMediaPrefix = $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion];
-		}
-
-		if (isset($this->requestGlobalGet[$localizationUrlParam])) {
-			if ($targetLocalizationSameAsDefault) {
-				if (isset($this->requestGlobalGet[$localizationUrlParam]))
-					unset($this->requestGlobalGet[$localizationUrlParam]);
-			} else {
-				$this->requestGlobalGet[$localizationUrlParam] = $targetLocalizationStr;
-			}
-			$targetLocalizationPrefix = '';
-		} else {
-			$path = $request->GetPath(TRUE);
-			$targetLocalizationPrefix = (
-				$targetLocalizationSameAsDefault && 
-				(trim($path, '/') === '' || $path === $this->request->GetScriptName())
-			)
-				? ''
-				: '/' . $targetLocalizationStr;
-		}
-
+		$request = & $this->request;
 		if ($this->anyRoutesConfigured) {
+			$targetMediaPrefix = $targetMediaUrlValue === '' ? '' : '/' . $targetMediaUrlValue;
+
+			$requestPath = $this->request->GetPath(TRUE);
+			if ($targetLocalizationUrlValue === $this->defaultLocalizationStr && (
+				trim($requestPath, '/') === '' || $requestPath === $this->request->GetScriptName()
+			)) {
+				$targetLocalizationPrefix = '';
+			} else {
+				$targetLocalizationPrefix = '/' . $targetLocalizationUrlValue;
+			}
+
 			$targetUrl = $request->GetBaseUrl()
 				. $targetMediaPrefix
 				. $targetLocalizationPrefix
-				. $request->GetPath(TRUE);
+				. $requestPath;
 		} else {
 			$targetUrl = $request->GetBaseUrl();
 			$this->removeDefaultCtrlActionFromGlobalGet();
