@@ -39,7 +39,7 @@ trait UrlByRouteSections
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
 	 * @param string $urlParamRouteName
-	 * @return string
+	 * @return array `string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams`
 	 */
 	protected function urlByRouteSections (\MvcCore\IRoute & $route, array & $params = [], $urlParamRouteName = NULL) {
 		/** @var $route \MvcCore\Route */
@@ -58,18 +58,15 @@ trait UrlByRouteSections
 		} else {
 			$mediaSiteVersion = $this->mediaSiteVersion;
 		}
-		// add special switching param to global get, if strict session mode and target version is different
-		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
-			$params[static::URL_PARAM_SWITCH_MEDIA_VERSION] = $mediaSiteVersion;
 		
 		// get url version value from application value (only for allowed request types)
 		$routeMethod = $route->GetMethod();
 		if ($this->routeGetRequestsOnly && $routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET) {
-			$mediaSiteUrlValue = '';
+			$mediaSiteUrlValue = NULL;
 		} else if (isset($this->allowedSiteKeysAndUrlValues[$mediaSiteVersion])) {
 			$mediaSiteUrlValue = $this->allowedSiteKeysAndUrlValues[$mediaSiteVersion];
 		} else {
-			$mediaSiteUrlValue = '';
+			$mediaSiteUrlValue = NULL;
 			trigger_error(
 				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
 				.$mediaSiteVersion.'`. Allowed values: `'
@@ -77,6 +74,9 @@ trait UrlByRouteSections
 				E_USER_ERROR
 			);
 		}
+		// add special switching param to global get, if strict session mode and target version is different
+		if ($this->stricModeBySession && $mediaSiteVersion !== NULL && $mediaSiteVersion !== $this->mediaSiteVersion) 
+			$params[static::URL_PARAM_SWITCH_MEDIA_VERSION] = $mediaSiteVersion;
 		
 		// get `$localizationStr` from `$params` to work with the version more specificly
 		// in route object to choose proper reverse pattern and to complete url prefix
@@ -92,11 +92,14 @@ trait UrlByRouteSections
 			if ($localizedRoute) $params[$localizationParamName] = $localizationStr;
 		}
 		// check if localization value is valid
-		if (!isset($this->allowedLocalizations[$localizationStr])) {
+		if ($this->routeGetRequestsOnly && $routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET) {
+			$localizationStr = NULL;
+		} else if (!isset($this->allowedLocalizations[$localizationStr])) {
+			// check if localization value is valid
 			if (isset($this->localizationEquivalents[$localizationStr])) 
 				$localizationStr = $this->localizationEquivalents[$localizationStr];
 			if (!isset($this->allowedLocalizations[$localizationStr])) {
-				$localizationStr = '';
+				$localizationStr = NULL;
 				trigger_error(
 					'['.__CLASS__.'] Not allowed localization used to generate url: `'
 					.$localizationStr.'`. Allowed values: `'
@@ -113,38 +116,18 @@ trait UrlByRouteSections
 			$params[static::URL_PARAM_SWITCH_LOCALIZATION] = $localizationStr;
 		
 		// complete by given route base url address part and part with path and query string
-		list($resultBase, $resultPathWithQuery) = $route->Url(
+		list($urlBaseSection, $urlPathWithQuerySection) = $route->Url(
 			$this->request, $params, $defaultParams, $this->getQueryStringParamsSepatator()
 		);
 		
-		// create localization prefix for all localized routes
-		// and for all url addresses except default language homepage
-		$localizationUrlPrefix = '';
-		$questionMarkPos = mb_strpos($resultPathWithQuery, '?');
-		$resultPath = $questionMarkPos !== FALSE 
-			? mb_substr($resultPathWithQuery, 0, $questionMarkPos)
-			: $resultPathWithQuery;
-		$resultPathTrimmed = trim($resultPath, '/');
-		if ($localizedRoute && !(
-			$resultPathTrimmed === '' && 
-			$localizationStr === $this->defaultLocalizationStr
-		)) $localizationUrlPrefix = '/' . $localizationStr;
-		// check route method and do not create any prefixes for POST (non GET) routes,
-		// if there is not allowed to route POST (non GET) requests
-		if ($this->routeGetRequestsOnly) {
-			if ($routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET) 
-				$localizationUrlPrefix = '';
-		}
-		
-		// finalizing possible trailing slash after prefix(es)
-		if (
-			$resultPathTrimmed === '' &&
-			$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE &&
-			($localizationUrlPrefix !== '' || $mediaSiteUrlValue !== '')
-		) $resultPathWithQuery = ltrim($resultPathWithQuery, '/');
+		$systemParams = [];
+		if ($mediaSiteUrlValue !== NULL) $systemParams[$mediaVersionUrlParam] = $mediaSiteUrlValue;
+		if ($localizationStr !== NULL) $systemParams[$localizationParamName] = $localizationStr;
 
-		$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . $mediaSiteUrlValue ;
-		
-		return [$resultBase, $mediaSiteUrlPrefix . $localizationUrlPrefix, $resultPathWithQuery];
+		return [
+			$urlBaseSection, 
+			$urlPathWithQuerySection, 
+			$systemParams
+		];
 	}
 }
