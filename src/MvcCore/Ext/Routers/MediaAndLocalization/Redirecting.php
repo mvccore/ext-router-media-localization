@@ -28,7 +28,7 @@ trait Redirecting
 		$redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
 		if (isset($targetSystemParams[$mediaParamName])) 
 			$targetMediaSiteVersion = $targetSystemParams[$mediaParamName];
-		if (isset($targetSystemParams[$localizationParamName])) {
+		if (isset($targetSystemParams[$localizationParamName])) 
 			$targetLocalization = $targetSystemParams[$localizationParamName];
 		if ($targetMediaSiteVersion === NULL) {
 			$redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
@@ -55,16 +55,22 @@ trait Redirecting
 		
 		$request = & $this->request;
 		if ($this->anyRoutesConfigured) {
+			$requestPath = $this->request->GetPath(TRUE);
+			$requestedPathIsHome = trim($requestPath, '/') === '' || $requestPath === $request->GetScriptName();
+
 			$targetMediaPrefix = $targetMediaUrlValue === '' ? '' : '/' . $targetMediaUrlValue;
 
-			$requestPath = $this->request->GetPath(TRUE);
-			if ($targetLocalizationUrlValue === $this->defaultLocalizationStr && (
-				trim($requestPath, '/') === '' || $requestPath === $this->request->GetScriptName()
-			)) {
+			if ($targetLocalizationUrlValue === $this->defaultLocalizationStr && $requestedPathIsHome) {
 				$targetLocalizationPrefix = '';
 			} else {
 				$targetLocalizationPrefix = '/' . $targetLocalizationUrlValue;
 			}
+
+			if (
+				$requestedPathIsHome &&
+				$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE &&
+				($targetMediaPrefix !== '' || $targetLocalizationPrefix !== '')
+			) $requestPath = '';
 
 			$targetUrl = $request->GetBaseUrl()
 				. $targetMediaPrefix
@@ -83,7 +89,7 @@ trait Redirecting
 		
 		if ($this->request->GetFullUrl() === $targetUrl) return TRUE;
 		
-		$this->redirect($targetUrl, $this->redirectStatusCode);
+		$this->redirect($targetUrl, $redirectStatusCode);
 		return FALSE;
 	}
 }
