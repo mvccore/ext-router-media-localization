@@ -14,7 +14,7 @@
 namespace MvcCore\Ext\Routers;
 
 /**
- * Responsibility - recognize media site version and localizationn from url or user agent 
+ * Responsibility - recognize media site version and localization from url or user agent 
  *					or session and set up request object, complete automaticly rewrited 
  *					url with remembered media site version and localization. Redirect 
  *					to proper media site version or localization by configuration.
