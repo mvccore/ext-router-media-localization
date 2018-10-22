@@ -35,7 +35,7 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	use \MvcCore\Ext\Routers\Localization\PropsGettersSetters;
 	use \MvcCore\Ext\Routers\Localization\Preparing;
 	use \MvcCore\Ext\Routers\Localization\PreRouting;
-	use \MvcCore\Ext\Routers\Localization\RoutingByRoutes;
+	use \MvcCore\Ext\Routers\Localization\RewriteRouting;
 	
 	use \MvcCore\Ext\Routers\MediaAndLocalization\RedirectSections;
 	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlByRouteSections;
