@@ -48,6 +48,7 @@ trait Routing
 	 */
 	public function Route () {
 		$this->internalRequest = $this->request->IsInternalRequest();
+		list($requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
 		if (!$this->internalRequest) {
 			if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
 			$this->prepare();
@@ -56,7 +57,6 @@ trait Routing
 			if (!$this->preRouteMedia()) return FALSE;
 			if (!$this->preRouteLocalization()) return FALSE;
 		}
-		list($requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
 		if ($this->routeByQueryString) {
 			$this->queryStringRouting(
 				$requestCtrlName, $requestActionName
