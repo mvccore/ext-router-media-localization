@@ -49,12 +49,19 @@ trait UrlByRouteSections
 		$routeMethod = $route->GetMethod();
 		
 
-		list($mediaVersionUrlParam, $mediaSiteUrlValue) = $this->urlByRouteSectionsMedia(
-			$route, $params, $defaultParams, $routeMethod
-		);
-		list($localizationParamName, $localizationStr) = $this->urlByRouteSectionsLocalization(
-			$route, $params, $routeMethod
-		);
+		$multipleMediaVersionConfigured = count($this->allowedMediaVersionsAndUrlValues) > 1;
+		$mediaVersionUrlParam = $mediaSiteUrlValue = NULL;
+		if ($multipleMediaVersionConfigured) 
+			list($mediaVersionUrlParam, $mediaSiteUrlValue) = $this->urlByRouteSectionsMedia(
+				$route, $params, $defaultParams, $routeMethod
+			);
+		
+		$multipleLocalizationsConfigured = count($this->allowedLocalizations) > 1;
+		$localizationParamName = $localizationStr = NULL;
+		if ($multipleLocalizationsConfigured) 
+			list($localizationParamName, $localizationStr) = $this->urlByRouteSectionsLocalization(
+				$route, $params, $routeMethod
+			);
 
 
 		// complete by given route base url address part and part with path and query string
@@ -62,11 +69,13 @@ trait UrlByRouteSections
 			$this->request, $params, $defaultParams, $this->getQueryStringParamsSepatator()
 		);
 		
+
 		$systemParams = [];
-		if ($mediaSiteUrlValue !== NULL) $systemParams[$mediaVersionUrlParam] = $mediaSiteUrlValue;
-		if ($localizationStr !== NULL) $systemParams[$localizationParamName] = $localizationStr;
+		if ($multipleMediaVersionConfigured && $mediaSiteUrlValue !== NULL)
+			$systemParams[$mediaVersionUrlParam] = $mediaSiteUrlValue;
+		if ($multipleLocalizationsConfigured && $localizationStr !== NULL)
+			$systemParams[$localizationParamName] = $localizationStr;
 		
-		x($systemParams);
 
 		return [
 			$urlBaseSection, 

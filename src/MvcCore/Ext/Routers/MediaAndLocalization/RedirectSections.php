@@ -25,17 +25,21 @@ trait RedirectSections
 		$urlBaseSection = $request->GetBaseUrl();
 		$urlPathWithQuerySection = $request->GetPath(TRUE);
 		
+
 		$targetMediaSiteVersion = NULL;
 		$targetLocalization = NULL;
+
 
 		$mediaVersionParamName = \MvcCore\Ext\Routers\IMedia::URL_PARAM_MEDIA_VERSION;
 		$localizationParamName = \MvcCore\Ext\Routers\ILocalization::URL_PARAM_LOCALIZATION;
 		$this->redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
 
+
 		if (isset($systemParams[$mediaVersionParamName])) 
 			$targetMediaSiteVersion = $systemParams[$mediaVersionParamName];
 		if (isset($systemParams[$localizationParamName])) 
 			$targetLocalization = $systemParams[$localizationParamName];
+
 
 		if ($targetMediaSiteVersion === NULL) {
 			$this->redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
@@ -56,6 +60,7 @@ trait RedirectSections
 				);
 		}
 
+
 		// unset site key switch param and redirect to no switch param uri version
 		$targetMediaUrlValue = $this->redirectMediaGetUrlValueAndUnsetGet($targetMediaSiteVersion);
 		$targetLocalizationUrlValue = $this->redirectLocalizationGetUrlValueAndUnsetGet($targetLocalization);
@@ -63,12 +68,14 @@ trait RedirectSections
 		$urlPathWithQueryIsHome = NULL;
 		if ($this->anyRoutesConfigured) {
 			
+
 			if ($targetMediaUrlValue === NULL) {
 				unset($systemParams[$mediaVersionParamName]);
 			} else {
 				$systemParams[$mediaVersionParamName] = $targetMediaUrlValue;
 			}
 			
+
 			if ($targetLocalizationUrlValue === NULL) {
 				unset($systemParams[$localizationParamName]);
 			} else {
@@ -80,6 +87,7 @@ trait RedirectSections
 				}
 			}
 
+
 			$this->redirectAddAllRemainingInGlobalGet($urlPathWithQuerySection);
 		} else {
 			$this->removeDefaultCtrlActionFromGlobalGet();
@@ -87,7 +95,7 @@ trait RedirectSections
 				$urlPathWithQuerySection .= $request->GetScriptName();
 			$this->redirectAddAllRemainingInGlobalGet($urlPathWithQuerySection);
 		}
-
+		
 		return [
 			$urlBaseSection,
 			$urlPathWithQuerySection, 
