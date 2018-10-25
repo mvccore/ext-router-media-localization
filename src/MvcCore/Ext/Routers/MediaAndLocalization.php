@@ -28,19 +28,30 @@ implements	\MvcCore\Ext\Routers\IMedia,
 {
 	use \MvcCore\Ext\Routers\Extended;
 
-	use \MvcCore\Ext\Routers\Media\PropsGettersSetters;
 	use \MvcCore\Ext\Routers\Media\Preparing;
 	use \MvcCore\Ext\Routers\Media\PreRouting;
+	use \MvcCore\Ext\Routers\Media\PropsGettersSetters;
+	//use \MvcCore\Ext\Routers\Media\RedirectSections;
+	//use \MvcCore\Ext\Routers\Media\Routing;
+	//use \MvcCore\Ext\Routers\Media\UrlByRoute;
+	//use \MvcCore\Ext\Routers\Media\UrlByRouteSections;
+	use \MvcCore\Ext\Routers\Media\UrlByRouteSectionsMedia;
 
-	use \MvcCore\Ext\Routers\Localization\PropsGettersSetters;
 	use \MvcCore\Ext\Routers\Localization\Preparing;
 	use \MvcCore\Ext\Routers\Localization\PreRouting;
+	use \MvcCore\Ext\Routers\Localization\PropsGettersSetters;
+	//use \MvcCore\Ext\Routers\Localization\RedirectSections;
 	use \MvcCore\Ext\Routers\Localization\RewriteRouting;
+	use \MvcCore\Ext\Routers\Localization\RewriteRoutingChecks;
+	//use \MvcCore\Ext\Routers\Localization\Routing;
+	//use \MvcCore\Ext\Routers\Localization\UrlByRoute;
+	//use \MvcCore\Ext\Routers\Localization\UrlByRouteSections;
+	use \MvcCore\Ext\Routers\Localization\UrlByRouteSectionsLocalization;
 	
 	use \MvcCore\Ext\Routers\MediaAndLocalization\RedirectSections;
-	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlByRouteSections;
-	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlByRoute;
 	use \MvcCore\Ext\Routers\MediaAndLocalization\Routing;
+	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlByRoute;
+	use \MvcCore\Ext\Routers\MediaAndLocalization\UrlByRouteSections;
 
 	/**
 	 * MvcCore Extension - Router Media - version:
