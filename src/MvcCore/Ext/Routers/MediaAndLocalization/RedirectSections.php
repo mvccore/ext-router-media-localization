@@ -61,7 +61,7 @@ trait RedirectSections
 		}
 
 
-		// unset site key switch param and redirect to no switch param uri version
+		// unset site key switch param and redirect to no switch param URL version
 		$targetMediaUrlValue = $this->redirectMediaGetUrlValueAndUnsetGet($targetMediaSiteVersion);
 		$targetLocalizationUrlValue = $this->redirectLocalizationGetUrlValueAndUnsetGet($targetLocalization);
 		
