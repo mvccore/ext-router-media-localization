@@ -16,13 +16,13 @@ namespace MvcCore\Ext\Routers\MediaAndLocalization;
 trait UrlByRouteSections
 {
 	/**
-	 * Complete non-absolute, non-localized url by route instance reverse info.
-	 * If there is key `media_version` in `$params`, unset this param before
-	 * route url completing and choose by this param url prefix to prepend 
-	 * completed url string.
-	 * If there is key `localization` in `$params`, unset this param before
-	 * route url completing and place this param as url prefix to prepend 
-	 * completed url string and to prepend media site version prefix.
+	 * Complete semi-finished result URL as two section strings and system 
+	 * params array. First section as base section with scheme, domain and base 
+	 * path, second section as application requested path and query string and 
+	 * third section as system params like `media_version` and/or `localization`.
+	 * Those params could be inserted between first two sections as system 
+	 * params in result URL by media and localization router behaviour and 
+	 * default values.
 	 * Example:
 	 *	Input (`\MvcCore\Route::$reverse`):
 	 *		`"/products-list/<name>/<color>"`
@@ -35,7 +35,11 @@ trait UrlByRouteSections
 	 *			"localization"	=> "en-US",
 	 *		);`
 	 *	Output:
-	 *		`/application/base-bath/m/en-US/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
+	 *		`[
+	 *			"/application/base/bath", 
+	 *			"/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL", 
+	 *			["media_version" => "m", "localization" => "en-US"]
+	 *		]`
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
 	 * @param string $urlParamRouteName
