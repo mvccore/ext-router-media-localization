@@ -20,9 +20,9 @@ Extension has the same features as extensions named above:
 - [Features for `mvccore/ext-router-media`](https://github.com/mvccore/ext-router-media#user-content-2-features)
 - [Features for `mvccore/ext-router-localization`](https://github.com/mvccore/ext-router-localization#user-content-2-features)
 
-In URL addresses is always contained media site prefix first before localization prexit like this - example:
+In URL addresses is always contained media site prefix first (before localization prefix) like this - example:
 - Full address for (default) locale `en-US`: `/en-US/any/path/with?query=string
-- Mobile address for different locale `en-US`: `/m/de-DE/alle/route/mit?abfragezeichen=folge
+- Mobile address for different locale `en-US`: `/m/de-DE/ein/route/mit?abfragezeichen=folge
 
 ## How It Works
 Extension works in the same way as extensions named above, each task is executed  
