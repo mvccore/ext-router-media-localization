@@ -8,6 +8,7 @@ MvcCore Router extension to manage website media version (full/tablet/mobile) fo
 This extension is mix of 2 extended router extensions:
 - [`mvccore/ext-router-media`](https://github.com/mvccore/ext-router-media)
 - [`mvccore/ext-router-localization`](https://github.com/mvccore/ext-router-localization)  
+
 This extension does the same things as named extensions above together.
 
 ## Installation
