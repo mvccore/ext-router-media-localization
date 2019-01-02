@@ -9,7 +9,7 @@ This extension is mix of 2 extended router extensions:
 - [`mvccore/ext-router-media`](https://github.com/mvccore/ext-router-media)
 - [`mvccore/ext-router-localization`](https://github.com/mvccore/ext-router-localization)  
 
-This extension does the same things as named extensions above together.
+This extension does the same things as extensions above together.
 
 ## Installation
 ```shell
@@ -17,7 +17,7 @@ composer require mvccore/ext-router-media-localization
 ```
 
 ## Features
-Extension has the same features as extensions named above:
+Extension has the same features as extensions bellow together:
 - [Features for `mvccore/ext-router-media`](https://github.com/mvccore/ext-router-media#user-content-2-features)
 - [Features for `mvccore/ext-router-localization`](https://github.com/mvccore/ext-router-localization#user-content-2-features)
 
