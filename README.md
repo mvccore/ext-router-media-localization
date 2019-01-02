@@ -6,7 +6,7 @@
 
 MvcCore Router extension to manage website media version (full/tablet/mobile) for different templates/css/js files rendering and to manage your website language (or language and locale) version optionaly contained in url address in the beinning.  
 This extension is mix of 2 extended router extensions:
-- <a href="https://github.com/mvccore/ext-router-media" target="blank">`mvccore/ext-router-media`</a>  
+- <a href="https://github.com/mvccore/ext-router-media" target="_blank">`mvccore/ext-router-media`</a>  
 - [`mvccore/ext-router-localization`](https://github.com/mvccore/ext-router-localization)  
 
 This extension does the same things as extensions above together.
