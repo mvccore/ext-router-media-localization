@@ -50,6 +50,6 @@ $app->SetRouterClass('\MvcCore\Ext\Routers\MediaAndLocalization');
 $router = & \MvcCore\Router::GetInstance();
 ```
 
-All other specific usage and advanced configuration is the same as extensions named above:
+All other specific usage and advanced configuration is the same as extensions bellow together:
 - [More usage and configuration for `mvccore/ext-router-media`](https://github.com/mvccore/ext-router-media#user-content-42-usage---media-url-prefixes-and-allowed-media-versions)
 - [More usage and configuration for `mvccore/ext-router-localization`](https://github.com/mvccore/ext-router-localization#user-content-42-usage---default-localization)
