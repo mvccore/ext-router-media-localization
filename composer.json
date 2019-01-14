@@ -37,14 +37,14 @@
 		"homepage": "https://github.com/tomFlidr"
 	}],
 	"require": {
-		"php": ">=5.3.0",
-		"mvccore/mvccore": "^4.3.1",
-		"mvccore/ext-router-extended": "^4.3.1",
-		"mvccore/ext-router-media": "^4.3.1",
-		"mvccore/ext-router-localization": "^4.3.1"
+		"php": ">=5.4.0",
+		"mvccore/mvccore": "dev-master",
+		"mvccore/ext-router-extended": "dev-master",
+		"mvccore/ext-router-media": "dev-master",
+		"mvccore/ext-router-localization": "dev-master"
 	},
 	"autoload": {
 		"classmap": ["src/"]
 	},
-	"minimum-stability": "stable"
+	"minimum-stability": "dev"
 }
