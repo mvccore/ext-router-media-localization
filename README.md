@@ -46,7 +46,7 @@ $app = \MvcCore\Application::GetInstance();
 $app->SetRouterClass('\MvcCore\Ext\Routers\MediaAndLocalization');
 ...
 // to get router instance for next configuration:
-/** @var $router \MvcCore\Ext\Routers\MediaAndLocalization */
+/** @var \MvcCore\Ext\Routers\MediaAndLocalization $router */
 $router = \MvcCore\Router::GetInstance();
 ```
 

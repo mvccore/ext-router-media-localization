@@ -13,6 +13,9 @@
 
 namespace MvcCore\Ext\Routers\MediaAndLocalization;
 
+/**
+ * @mixin \MvcCore\Ext\Routers\MediaAndLocalization
+ */
 trait UrlByRouteSections {
 
 	/**
@@ -46,7 +49,6 @@ trait UrlByRouteSections {
 	 * @return array `string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams`
 	 */
 	protected function urlByRouteSections (\MvcCore\IRoute $route, array & $params = [], $urlParamRouteName = NULL) {
-		/** @var $this \MvcCore\Ext\Routers\MediaAndLocalization */
 		$defaultParams = array_merge([], $this->GetDefaultParams() ?: []);
 		if ($urlParamRouteName == 'self') 
 			$params = array_merge($this->requestedParams ?: [], $params);

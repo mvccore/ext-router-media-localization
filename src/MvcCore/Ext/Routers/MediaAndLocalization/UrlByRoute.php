@@ -13,6 +13,9 @@
 
 namespace MvcCore\Ext\Routers\MediaAndLocalization;
 
+/**
+ * @mixin \MvcCore\Ext\Routers\MediaAndLocalization
+ */
 trait UrlByRoute {
 
 	/**
@@ -43,7 +46,6 @@ trait UrlByRoute {
 	 * @return string
 	 */
 	public function UrlByRoute (\MvcCore\IRoute $route, array & $params = [], $urlParamRouteName = NULL) {
-		/** @var $this \MvcCore\Ext\Routers\MediaAndLocalization */
 		// get domain with base path url section, 
 		// path with query string url section 
 		// and system params for url prefixes
