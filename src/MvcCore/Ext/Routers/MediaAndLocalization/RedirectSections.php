@@ -65,7 +65,6 @@ trait RedirectSections {
 				);
 		}
 
-
 		// unset site key switch param and redirect to no switch param URL version
 		$targetMediaUrlValue = $this->redirectMediaGetUrlValueAndUnsetGet($targetMediaSiteVersion);
 		$targetLocalizationUrlValue = $this->redirectLocalizationGetUrlValueAndUnsetGet($targetLocalization);
@@ -100,6 +99,14 @@ trait RedirectSections {
 				$urlPathWithQuerySection .= $request->GetScriptName();
 			$this->redirectAddAllRemainingInGlobalGet($urlPathWithQuerySection);
 		}
+
+		// keep the right system params order every time:
+		$systemParamsClone = array_merge([], $systemParams);
+		$systemParams = [];
+		if (isset($systemParamsClone[$localizationParamName]))
+			$systemParams[$mediaVersionParamName] = $systemParamsClone[$mediaVersionParamName];
+		if (isset($systemParamsClone[$localizationParamName]))
+			$systemParams[$localizationParamName] = $systemParamsClone[$localizationParamName];
 		
 		return [
 			$urlBaseSection,
