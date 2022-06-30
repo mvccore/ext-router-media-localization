@@ -40,8 +40,8 @@
 		"php": ">=5.4.0",
 		"mvccore/mvccore": "^5.0",
 		"mvccore/ext-router-extended": "^5.0",
-		"mvccore/ext-router-media": "^5.0",
-		"mvccore/ext-router-localization": "^5.0"
+		"mvccore/ext-router-media": "^5.0.4",
+		"mvccore/ext-router-localization": "^5.0.3"
 	},
 	"autoload": {
 		"classmap": [
