@@ -44,7 +44,7 @@ trait RedirectSections {
 			$targetMediaSiteVersion = $systemParams[$mediaVersionParamName];
 		if (isset($systemParams[$localizationParamName])) 
 			$targetLocalization = $systemParams[$localizationParamName];
-
+		
 
 		if ($targetMediaSiteVersion === NULL) {
 			$this->redirectStatusCode = \MvcCore\IResponse::MOVED_PERMANENTLY;
@@ -103,7 +103,7 @@ trait RedirectSections {
 		// keep the right system params order every time:
 		$systemParamsClone = array_merge([], $systemParams);
 		$systemParams = [];
-		if (isset($systemParamsClone[$localizationParamName]))
+		if (isset($systemParamsClone[$mediaVersionParamName]))
 			$systemParams[$mediaVersionParamName] = $systemParamsClone[$mediaVersionParamName];
 		if (isset($systemParamsClone[$localizationParamName]))
 			$systemParams[$localizationParamName] = $systemParamsClone[$localizationParamName];
