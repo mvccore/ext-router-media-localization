@@ -41,7 +41,7 @@
 		"mvccore/mvccore": "^5.3",
 		"mvccore/ext-router-extended": "^5.3",
 		"mvccore/ext-router-media": "^5.3",
-		"mvccore/ext-router-localization": "^5.3"
+		"mvccore/ext-router-localization": "^5.3.1"
 	},
 	"autoload": {
 		"classmap": [
